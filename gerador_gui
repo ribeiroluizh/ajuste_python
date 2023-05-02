@@ -1,6 +1,6 @@
 import pandas as pd
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -57,11 +57,21 @@ class Application(tk.Frame):
         path_a = self.planilha_a_path.get()
         path_b = self.planilha_b_path.get()
         path_c = self.planilha_c_path.get()
-        planilha_a = pd.read_csv(path_a)
-        planilha_b = pd.read_csv(path_b)
+        planilha_a = pd.read_csv(path_a, delimiter=';')
+        planilha_b = pd.read_csv(path_b, delimiter=';').drop_duplicates()
         nomes_exclusivos = planilha_a[~planilha_a['Nome'].isin(planilha_b['Nome'])]
         nomes_exclusivos.to_csv(path_c, index=False)
+        messagebox.showinfo('Concluido', 'Planilha salva com sucesso!')
+        resposta = messagebox.askquestion('Continue', 'Deseja manipular outra planilha?')
+        if resposta == 'yes':
+            self.planilha_a_path.delete(0, 'end')
+            self.planilha_b_path.delete(0, 'end')
+            self.planilha_c_path.delete(0, 'end')
+        else:
+            messagebox.showinfo('Finalizando', 'Aplicativo encerrado')
+            self.master.destroy()
 
+        
 root = tk.Tk()
 app = Application(master=root)
 app.mainloop()

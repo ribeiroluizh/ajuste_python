@@ -1,0 +1,11 @@
+import pandas as pd
+
+planilha_a = pd.read_csv(r'C:\Users\ribeiroluizh\Desktop\PLANILHAS\Planilha_A.csv')
+planilha_b = pd.read_csv(r'C:\Users\ribeiroluizh\Desktop\PLANILHAS\Planilha_B.csv')
+
+
+# Verificando quais nomes da planilha A não estão na planilha B
+nomes_exclusivos = planilha_a[~planilha_a['Nome'].isin(planilha_b['Nome'])]
+
+# Salvando os nomes exclusivos na planilha C
+nomes_exclusivos.to_csv('planilha_c.csv', index=False)

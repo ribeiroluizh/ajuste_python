@@ -1,0 +1,67 @@
+import pandas as pd
+import tkinter as tk
+from tkinter import filedialog
+
+class Application(tk.Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.master = master
+        self.master.title("Encontrar nomes exclusivos")
+        self.create_widgets()
+
+    def create_widgets(self):
+        self.planilha_a_label = tk.Label(self.master, text="Planilha A:")
+        self.planilha_a_label.grid(row=0, column=0)
+
+        self.planilha_a_path = tk.Entry(self.master)
+        self.planilha_a_path.grid(row=0, column=1)
+
+        self.planilha_a_button = tk.Button(self.master, text="Selecionar arquivo", command=self.open_file_a)
+        self.planilha_a_button.grid(row=0, column=2)
+
+        self.planilha_b_label = tk.Label(self.master, text="Planilha B:")
+        self.planilha_b_label.grid(row=1, column=0)
+
+        self.planilha_b_path = tk.Entry(self.master)
+        self.planilha_b_path.grid(row=1, column=1)
+
+        self.planilha_b_button = tk.Button(self.master, text="Selecionar arquivo", command=self.open_file_b)
+        self.planilha_b_button.grid(row=1, column=2)
+
+        self.planilha_c_label = tk.Label(self.master, text="Planilha C:")
+        self.planilha_c_label.grid(row=2, column=0)
+
+        self.planilha_c_path = tk.Entry(self.master)
+        self.planilha_c_path.grid(row=2, column=1)
+
+        self.planilha_c_button = tk.Button(self.master, text="Salvar arquivo", command=self.save_file)
+        self.planilha_c_button.grid(row=2, column=2)
+
+        self.execute_button = tk.Button(self.master, text="Executar", command=self.find_unique_names)
+        self.execute_button.grid(row=3, column=1)
+
+    def open_file_a(self):
+        file_path = filedialog.askopenfilename()
+        self.planilha_a_path.insert(0, file_path)
+
+    def open_file_b(self):
+        file_path = filedialog.askopenfilename()
+        self.planilha_b_path.insert(0, file_path)
+
+    def save_file(self):
+        file_path = filedialog.asksaveasfile(defaultextension=".csv", filetypes=[('CSV', '*.csv')])
+        if file_path is not None:
+            self.planilha_c_path.insert(0, file_path.name)
+
+    def find_unique_names(self):
+        path_a = self.planilha_a_path.get()
+        path_b = self.planilha_b_path.get()
+        path_c = self.planilha_c_path.get()
+        planilha_a = pd.read_csv(path_a)
+        planilha_b = pd.read_csv(path_b)
+        nomes_exclusivos = planilha_a[~planilha_a['Nome'].isin(planilha_b['Nome'])]
+        nomes_exclusivos.to_csv(path_c, index=False)
+
+root = tk.Tk()
+app = Application(master=root)
+app.mainloop()
